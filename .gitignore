@@ -34,8 +34,11 @@ spec/fixtures/modules/
 ## Puppet module
 pkg/
 coverage/
+Puppetfile.lock
 
 ## Librarian-puppet
 .tmp/
 .librarian/
 
+## gem
+Gemfile.lock
