@@ -21,6 +21,11 @@ define sonarqube::plugin(
   $ensure     = present,
   $artifactid = $name,
   $groupid    = 'org.codehaus.sonar-plugins',
+  $repo       = {
+    url => 'http://repo1.maven.org/maven2',
+    username => 'UNSET',
+    password => 'UNSET',
+  }
 ) {
   $plugin_name = "${artifactid}-${version}.jar"
   $plugin      = "${sonarqube::plugin_dir}/${plugin_name}"
@@ -35,6 +40,7 @@ define sonarqube::plugin(
       version    => $version,
       before     => File[$plugin],
       require    => File[$sonarqube::plugin_dir],
+      repo       => $repo
     }
 
     ~> exec { "remove-old-versions-of-${artifactid}":

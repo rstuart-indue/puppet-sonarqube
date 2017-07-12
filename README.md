@@ -55,14 +55,14 @@ The `sonarqube::plugin` defined type can be used to install SonarQube plugins. N
     class { 'maven::maven': }
     ->
     class { 'sonarqube': }
-    
+
     sonarqube::plugin { 'sonar-javascript-plugin':
       groupid    => 'org.sonarsource.javascript',
       artifactid => 'sonar-javascript-plugin',
       version    => '2.10',
       notify     => Service['sonar'],
     }
-    
+
 
 ## Security Configuration
 
@@ -87,6 +87,11 @@ The `sonarqube` class provides an easy way to configure security with LDAP, Crow
       groupid    => 'org.sonarsource.ldap',
       artifactid => 'sonar-ldap-plugin',
       version    => '1.5.1',
+      repo       => {
+        url      => 'http://repo1.maven.org/maven2',
+        username => 'user',
+        password => 'password'
+      },
       notify     => Service['sonar'],
     }
 
