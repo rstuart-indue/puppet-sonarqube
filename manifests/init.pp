@@ -13,6 +13,7 @@
 # limitations under the License.
 class sonarqube (
   $version          = '4.5.5',
+  $testing          = false,
   $user             = 'sonar',
   $group            = 'sonar',
   $user_system      = true,
