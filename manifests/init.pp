@@ -166,7 +166,7 @@ class sonarqube (
     owner   => root,
     group   => root,
     mode    => '0755',
-    content => template('sonar/sonar.service.erb')
+    content => template("${module_name}/sonar.service.erb")
   }
 
   # Sonar configuration files
