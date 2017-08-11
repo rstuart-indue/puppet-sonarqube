@@ -4,9 +4,9 @@ After=network.target network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/bin/sonar.sh start
-ExecStop=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/bin/sonar.sh stop
-ExecReload=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/bin/sonar.sh restart
+ExecStart=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/sonar.sh start
+ExecStop=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/sonar.sh stop
+ExecReload=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/sonar.sh restart
 PIDFile=<%= @installroot.to_s -%>/sonar.pid
 Type=forking
 User=<%= @user.to_s %>
