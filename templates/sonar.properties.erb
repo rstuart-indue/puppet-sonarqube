@@ -140,6 +140,9 @@ sonar.search.host=<%= @search_host %>
 # Permissions to create tables and indexes must be granted to JDBC user.
 # The schema must be created first.
 sonar.jdbc.url:         <%= @jdbc['url'] %>
+<% if @testing == true -%>
+sonar.embeddedDatabasePort=9092
+<% end -%>
 <% if @testing == false -%>
 sonar.jdbc.username:    <%= @jdbc['username'] %>
 sonar.jdbc.password:    <%= @jdbc['password'] %>
