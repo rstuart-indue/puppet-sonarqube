@@ -40,7 +40,7 @@ define sonarqube::plugin(
       version    => $version,
       before     => File[$plugin],
       require    => File[$sonarqube::plugin_dir],
-      repo       => $repo
+      repos      => $repo
     }
 
     ~> exec { "remove-old-versions-of-${artifactid}":
