@@ -161,6 +161,14 @@ class sonarqube (
     target => $script,
   }
 
+  file { '/etc/systemd/system/sonar.service':
+    ensure  => file,
+    owner   => root,
+    group   => root,
+    mode    => '0755',
+    content => template('sonar/sonar.service.erb')
+  }
+
   # Sonar configuration files
   if $config != undef {
     file { "${installdir}/conf/sonar.properties":
@@ -206,6 +214,6 @@ class sonarqube (
     hasrestart => true,
     hasstatus  => true,
     enable     => true,
-    require    => File["/etc/init.d/${service}"],
+    require    => [ File["/etc/init.d/${service}"], File['/etc/systemd/system/sonar.service'] ]
   }
 }
