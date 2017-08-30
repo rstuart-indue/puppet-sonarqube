@@ -140,8 +140,13 @@ sonar.search.host=<%= @search_host %>
 # Permissions to create tables and indexes must be granted to JDBC user.
 # The schema must be created first.
 sonar.jdbc.url:         <%= @jdbc['url'] %>
+<% if @testing == true -%>
+sonar.embeddedDatabasePort=9092
+<% end -%>
+<% if @testing == false -%>
 sonar.jdbc.username:    <%= @jdbc['username'] %>
 sonar.jdbc.password:    <%= @jdbc['password'] %>
+<% end -%>
 
 #----- Embedded database H2
 # Note : it does not accept connections from remote hosts, so the
@@ -195,6 +200,7 @@ sonar.jdbc.password:    <%= @jdbc['password'] %>
 
 
 #----- Connection pool settings
+<% if @testing == false -%>
 sonar.jdbc.maxActive:                      <% if @jdbc['max_active'] %><%= @jdbc['max_active'] %><% else %>50<% end %>
 sonar.jdbc.maxIdle:                        <% if @jdbc['max_idle'] %><%= @jdbc['max_idle'] %><% else %>5<% end %>
 sonar.jdbc.minIdle:                        <% if @jdbc['min_idle'] %><%= @jdbc['min_idle'] %><% else %>2<% end %>
@@ -202,6 +208,7 @@ sonar.jdbc.maxWait:                        <% if @jdbc['max_wait'] %><%= @jdbc['
 sonar.jdbc.minEvictableIdleTimeMillis:     <% if @jdbc['min_evictable_idle_time_millis'] %><%= @jdbc['min_evictable_idle_time_millis'] %><% else %>600000<% end %>
 sonar.jdbc.timeBetweenEvictionRunsMillis:  <% if @jdbc['time_between_eviction_runs_millis'] %><%= @jdbc['time_between_eviction_runs_millis'] %><% else %>30000<% end %>
 
+<% end -%>
 <% end -%>
 
 #---------------------------------------------------------

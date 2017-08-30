@@ -13,6 +13,7 @@
 # limitations under the License.
 class sonarqube (
   $version          = '4.5.5',
+  $testing          = false,
   $user             = 'sonar',
   $group            = 'sonar',
   $user_system      = true,
@@ -161,6 +162,14 @@ class sonarqube (
     target => $script,
   }
 
+  file { '/etc/systemd/system/sonar.service':
+    ensure  => file,
+    owner   => root,
+    group   => root,
+    mode    => '0755',
+    content => template("${module_name}/sonar.service.erb")
+  }
+
   # Sonar configuration files
   if $config != undef {
     file { "${installdir}/conf/sonar.properties":
@@ -206,6 +215,6 @@ class sonarqube (
     hasrestart => true,
     hasstatus  => true,
     enable     => true,
-    require    => File["/etc/init.d/${service}"],
+    require    => [ File["/etc/init.d/${service}"], File['/etc/systemd/system/sonar.service'] ]
   }
 }
