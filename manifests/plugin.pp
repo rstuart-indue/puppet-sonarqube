@@ -54,13 +54,13 @@ define sonarqube::plugin(
       source => "/tmp/${plugin_name}",
       owner  => $sonarqube::user,
       group  => $sonarqube::group,
-      notify => Service['sonarqube'],
+      notify => Service['sonarqube.service'],
     }
   } else {
     # Uninstall plugin if absent
     file { $plugin:
       ensure => $ensure,
-      notify => Service['sonarqube'],
+      notify => Service['sonarqube.service'],
     }
   }
 }

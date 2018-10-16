@@ -124,7 +124,7 @@ class sonarqube (
   -> file { $installdir:
     ensure => link,
     target => "${installroot}/${package_name}-${version}",
-    notify => Service["${service}.service"],
+    notify => Service['sonarqube.service'],
   }
 
   -> sonarqube::move_to_home {
@@ -149,7 +149,6 @@ class sonarqube (
       ${user}:${group} ${installroot}/${package_name}-${version} \
       && chown -R ${user}:${group} ${real_home}",
     creates => "${installroot}/${package_name}-${version}/bin",
-    notify  => Service["${service}.service"],
   }
 
   -> file { $script:
@@ -157,13 +156,11 @@ class sonarqube (
     content => template('sonarqube/sonar.sh.erb'),
   }
 
-  systemd::unit_file { "${service}.service":
+  systemd::unit_file { 'sonarqube.service':
     enable  => true,
     active  => true,
     content => template("${module_name}/sonar.service.erb"),
-    require => [
-      File[$script],
-    ],
+    require => File[$script],
   }
 
   # Sonar configuration files
@@ -171,14 +168,14 @@ class sonarqube (
     file { "${installdir}/conf/sonar.properties":
       source  => $config,
       require => Exec['untar'],
-      notify  => Service["${service}.service"],
+      notify  => Service['sonarqube.service'],
       mode    => '0600',
     }
   } else {
     file { "${installdir}/conf/sonar.properties":
       content => template('sonarqube/sonar.properties.erb'),
       require => Exec['untar'],
-      notify  => Service["${service}.service"],
+      notify  => Service['sonarqube.service'],
       mode    => '0600',
     }
   }
