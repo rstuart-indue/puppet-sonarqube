@@ -18,7 +18,7 @@ class sonarqube (
   $group            = 'sonar',
   $user_system      = true,
   $service          = 'sonar',
-  $installroot      = '/usr/local',
+  $installroot      = '/opt',
   $home             = undef,
   $host             = undef,
   $port             = 9000,
@@ -124,7 +124,7 @@ class sonarqube (
   -> file { $installdir:
     ensure => link,
     target => "${installroot}/${package_name}-${version}",
-    notify => Service['sonarqube'],
+    notify => Service["${service}.service"],
   }
 
   -> sonarqube::move_to_home {
@@ -149,7 +149,7 @@ class sonarqube (
       ${user}:${group} ${installroot}/${package_name}-${version} \
       && chown -R ${user}:${group} ${real_home}",
     creates => "${installroot}/${package_name}-${version}/bin",
-    notify  => Service['sonarqube'],
+    notify  => Service["${service}.service"],
   }
 
   -> file { $script:
@@ -157,12 +157,13 @@ class sonarqube (
     content => template('sonarqube/sonar.sh.erb'),
   }
 
-  file { '/etc/systemd/system/sonar.service':
-    ensure  => file,
-    owner   => root,
-    group   => root,
-    mode    => '0755',
-    content => template("${module_name}/sonar.service.erb")
+  systemd::unit_file { "${service}.service":
+    enable  => true,
+    active  => true,
+    content => template("${module_name}/sonar.service.erb"),
+    require => [
+      File[$script],
+    ],
   }
 
   # Sonar configuration files
@@ -170,14 +171,14 @@ class sonarqube (
     file { "${installdir}/conf/sonar.properties":
       source  => $config,
       require => Exec['untar'],
-      notify  => Service['sonarqube'],
+      notify  => Service["${service}.service"],
       mode    => '0600',
     }
   } else {
     file { "${installdir}/conf/sonar.properties":
       content => template('sonarqube/sonar.properties.erb'),
       require => Exec['untar'],
-      notify  => Service['sonarqube'],
+      notify  => Service["${service}.service"],
       mode    => '0600',
     }
   }
@@ -204,12 +205,4 @@ class sonarqube (
     ensure => directory,
   }
 
-  service { 'sonarqube':
-    ensure     => running,
-    name       => $service,
-    hasrestart => true,
-    hasstatus  => true,
-    enable     => true,
-    require    => [ File["/etc/init.d/${service}"], File['/etc/systemd/system/sonar.service'] ]
-  }
 }
