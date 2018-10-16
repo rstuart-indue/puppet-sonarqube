@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 class sonarqube (
-  $version          = '4.5.5',
+  $version          = '6.7.5',
   $testing          = false,
   $user             = 'sonar',
   $group            = 'sonar',
@@ -23,8 +23,8 @@ class sonarqube (
   $host             = undef,
   $port             = 9000,
   $port_ajp          = -1,
-  $download_url     = 'https://sonarsource.bintray.com/Distribution/sonarqube',
-  $download_dir     = '/usr/local/src',
+  $download_url     = 'https://binaries.sonarsource.com/Distribution/sonarqube',
+  $download_dir     = '/tmp',
   $context_path     = '/',
   $arch             = $sonarqube::params::arch,
   $https            = {},
@@ -43,7 +43,7 @@ class sonarqube (
     min_evictable_idle_time_millis    => '600000',
     time_between_eviction_runs_millis => '30000',
   },
-  $log_folder       = '/var/local/sonar/logs',
+  $log_folder       = '/var/log/sonar',
   $updatecenter     = true,
   $http_proxy       = {},
   $profile          = false,
@@ -55,7 +55,7 @@ class sonarqube (
 ) inherits sonarqube::params {
   validate_absolute_path($download_dir)
   Exec {
-    path => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin',
+    path => '/sbin:/usr/sbin:/usr/bin:/bin',
   }
   File {
     owner => $user,
@@ -70,7 +70,7 @@ class sonarqube (
   if $home != undef {
     $real_home = $home
   } else {
-    $real_home = '/var/local/sonar'
+    $real_home = '/opt/sonar'
   }
   Sonarqube::Move_to_home {
     home => $real_home,
@@ -157,11 +157,6 @@ class sonarqube (
     content => template('sonarqube/sonar.sh.erb'),
   }
 
-  -> file { "/etc/init.d/${service}":
-    ensure => link,
-    target => $script,
-  }
-
   file { '/etc/systemd/system/sonar.service':
     ensure  => file,
     owner   => root,
@@ -199,7 +194,7 @@ class sonarqube (
 
   -> exec { 'remove-old-versions-of-sonarqube':
     command     => "/tmp/cleanup-old-sonarqube-versions.sh ${installroot} ${version}",
-    path        => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin',
+    #path        => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin',
     refreshonly => true,
     subscribe   => File["${installroot}/${package_name}-${version}"],
   }
