@@ -7,7 +7,7 @@ Wants=network-online.target
 ExecStart=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/sonar.sh start
 ExecStop=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/sonar.sh stop
 ExecReload=<%= @installroot.to_s -%>/sonar/bin/linux-<%= @architecture.to_s.gsub(/_/,'-') -%>/sonar.sh restart
-PIDFile=<%= @installroot.to_s -%>/sonar.pid
+PIDFile=<%= @real_home.to_s -%>/sonar.pid
 Type=forking
 User=<%= @user.to_s %>
 
