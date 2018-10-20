@@ -267,6 +267,12 @@ sonar.authenticator.downcase=<%= @ldap['authenticator_downcase'] %>
 
 ldap.url=<%= @ldap['url'] %>
 
+<% if @ldap['starttls'] -%>
+ldap.StartTLS=<%= @ldap['starttls'] %>
+<% else -%>
+ldap.StartTLS=false
+<% end -%>
+
 <% if @ldap['bind_dn'] -%>
 ldap.bindDn=<%= @ldap['bind_dn'] %>
 <% end -%>
