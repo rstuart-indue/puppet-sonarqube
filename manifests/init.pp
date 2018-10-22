@@ -13,6 +13,7 @@
 # limitations under the License.
 class sonarqube (
   $version          = '6.7.5',
+  $package_name     = 'sonarqube',
   $testing          = false,
   $user             = 'sonar',
   $group            = 'sonar',
@@ -64,8 +65,6 @@ class sonarqube (
 
   # wget from https://github.com/maestrodev/puppet-wget
   include wget
-
-  $package_name = 'sonarqube'
 
   if $home != undef {
     $real_home = $home
