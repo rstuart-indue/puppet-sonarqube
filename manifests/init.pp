@@ -116,13 +116,13 @@ class sonarqube (
     mode   => '0700',
   }
 
-  -> file { "${installroot}/${package_name}-${version}":
+  -> file { "${installroot}/sonarqube-${version}":
     ensure => directory,
   }
 
   -> file { $installdir:
     ensure => link,
-    target => "${installroot}/${package_name}-${version}",
+    target => "${installroot}/sonarqube-${version}",
     notify => Service['sonarqube.service'],
   }
 
@@ -145,9 +145,9 @@ class sonarqube (
   # ===== Install SonarQube =====
   -> exec { 'untar':
     command => "unzip -o ${tmpzip} -d ${installroot} && chown -R \
-      ${user}:${group} ${installroot}/${package_name}-${version} \
+      ${user}:${group} ${installroot}/sonarqube-${version} \
       && chown -R ${user}:${group} ${real_home}",
-    creates => "${installroot}/${package_name}-${version}/bin",
+    creates => "${installroot}/sonarqube-${version}/bin",
   }
 
   -> file { $script:
@@ -192,7 +192,7 @@ class sonarqube (
   -> exec { 'remove-old-versions-of-sonarqube':
     command     => "/tmp/cleanup-old-sonarqube-versions.sh ${installroot} ${version}",
     refreshonly => true,
-    subscribe   => File["${installroot}/${package_name}-${version}"],
+    subscribe   => File["${installroot}/sonarqube-${version}"],
   }
 
   # The plugins directory. Useful to later reference it from the plugin definition
