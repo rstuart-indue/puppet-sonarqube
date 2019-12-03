@@ -47,6 +47,7 @@ class sonarqube (
   $log_folder       = '/var/log/sonar',
   $updatecenter     = true,
   $http_proxy       = {},
+  $no_proxy_hosts    = undef,
   $profile          = false,
   $web_java_opts    = undef,
   $search_java_opts = undef,
