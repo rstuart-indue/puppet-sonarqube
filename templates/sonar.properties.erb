@@ -232,7 +232,7 @@ http.proxyUser=<%= @http_proxy['user'] %>
 http.proxyPassword=<%= @http_proxy['password'] %>
 <% end -%>
 
-<% if !@no_http_proxy -%>
+<% if @no_http_proxy -%>
 # Proxy exceptions: list of hosts that can be accessed without going through the proxy
 # separated by the '|' character, wildcard character '*' can be used for pattern matching
 # used for HTTP and HTTPS (default none)
