@@ -65,7 +65,7 @@ class sonarqube (
   }
 
   # wget from https://github.com/maestrodev/puppet-wget
-  include wget
+  #include wget
 
   if $home != undef {
     $real_home = $home
@@ -86,7 +86,7 @@ class sonarqube (
   if ! defined(Package[unzip]) {
     package { 'unzip':
       ensure => present,
-      before => Exec[untar],
+      before => Archive[$tmpzip],
     }
   }
 
@@ -102,10 +102,10 @@ class sonarqube (
     system => $user_system,
   }
 
-  -> wget::fetch { 'download-sonar':
-    source      => "${download_url}/${package_name}-${version}.zip",
-    destination => $tmpzip,
-  }
+#  -> wget::fetch { 'download-sonar':
+#    source      => "${download_url}/${package_name}-${version}.zip",
+#    destination => $tmpzip,
+#  }
 
   # ===== Create folder structure =====
   # so uncompressing new sonar versions at update time use the previous sonar home,
@@ -144,12 +144,22 @@ class sonarqube (
   }
 
   # ===== Install SonarQube =====
-  -> exec { 'untar':
-    command => "unzip -o ${tmpzip} -d ${installroot} && chown -R \
-      ${user}:${group} ${installroot}/sonarqube-${version} \
-      && chown -R ${user}:${group} ${real_home}",
-    creates => "${installroot}/sonarqube-${version}/bin",
+  -> archive { $tmpzip:
+    source       => "${download_url}/${package_name}-${version}.zip",
+    extract_path => $installroot,
+    creates      => "${installroot}/sonarqube-${version}/bin",
+    extract      => true,
+    cleanup      => true,
+    user         => $user,
+    group        => $group,
   }
+
+#  exec { 'untar':
+#    command => "unzip -o ${tmpzip} -d ${installroot} && chown -R \
+#      ${user}:${group} ${installroot}/sonarqube-${version} \
+#      && chown -R ${user}:${group} ${real_home}",
+#    creates => "${installroot}/sonarqube-${version}/bin",
+#  }
 
   -> file { $script:
     mode    => '0755',
@@ -167,16 +177,16 @@ class sonarqube (
   if $config != undef {
     file { "${installdir}/conf/sonar.properties":
       source  => $config,
-      require => Exec['untar'],
+      require => Archive[$tmpzip],
       notify  => Service['sonarqube.service'],
       mode    => '0600',
     }
   } else {
     file { "${installdir}/conf/sonar.properties":
       content => template('sonarqube/sonar.properties.erb'),
-      require => Exec['untar'],
       notify  => Service['sonarqube.service'],
       mode    => '0600',
+      require => Archive[$tmpzip],
     }
   }
 
