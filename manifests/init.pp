@@ -86,7 +86,7 @@ class sonarqube (
   if ! defined(Package[unzip]) {
     package { 'unzip':
       ensure => present,
-      before => Exec[untar],
+      before => Archive[$tmpzip],
     }
   }
 
