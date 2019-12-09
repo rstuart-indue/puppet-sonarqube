@@ -177,16 +177,16 @@ class sonarqube (
   if $config != undef {
     file { "${installdir}/conf/sonar.properties":
       source  => $config,
-      require => Exec['untar'],
+      require => Archive[$tmpzip],
       notify  => Service['sonarqube.service'],
       mode    => '0600',
     }
   } else {
     file { "${installdir}/conf/sonar.properties":
       content => template('sonarqube/sonar.properties.erb'),
-      require => Exec['untar'],
       notify  => Service['sonarqube.service'],
       mode    => '0600',
+      require => Archive[$tmpzip],
     }
   }
 
