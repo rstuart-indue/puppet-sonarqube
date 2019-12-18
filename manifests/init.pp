@@ -172,6 +172,11 @@ class sonarqube (
     content => template("${module_name}/sonar.service.erb"),
     require => File[$script],
   }
+  systemd::service_limits { 'sonarqube.service':
+    limits => {
+      'LimitNOFILE' => '131072',
+    },
+  }
 
   # Sonar configuration files
   if $config != undef {
